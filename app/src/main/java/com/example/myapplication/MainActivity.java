@@ -2,7 +2,11 @@ package com.example.myapplication;
 
 import android.Manifest;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +29,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.INTERNET,
-            //           Manifest.permission.READ_CONTACTS,  //我们不需要联系人
+//           Manifest.permission.READ_CONTACTS,  //我们不需要联系人
 //            Manifest.permission.MODIFY_AUDIO_SETTINGS,
 //            Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CAMERA};
@@ -269,5 +275,74 @@ public class MainActivity extends AppCompatActivity {
         return buffer.array(); //Get the underlying array containing the data.
     }
 
+    public void save_bitmap(Bitmap bitmap,String save_name){
+        FileOutputStream fos;
+        try {
+            // 判断手机设备是否有SD卡
+            boolean isHasSDCard = Environment.getExternalStorageState().equals(
+                    android.os.Environment.MEDIA_MOUNTED);
+            if (isHasSDCard) {
+                // SD卡根目录
+                File sdRoot = Environment.getExternalStorageDirectory();
+                File file = new File(sdRoot, save_name);//  "test.jpg"
+                fos = new FileOutputStream(file);
+            } else
+                throw new Exception("创建文件失败!");
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+
+            fos.flush();
+            fos.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public Bitmap read_bitmap(String save_name){
+        Bitmap bit;
+        bit = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory().getAbsolutePath()+ "/"+save_name);
+        return bit;
+    }
+
+    public void onSuccess(int i, String json) {
+        Log.i("Channel", "onSuccess");
+        Message message = Message.obtain();
+        message.what = i;
+        Bundle bundle = new Bundle();
+        bundle.putString("json", json);
+        message.setData(bundle);
+        mHandler.sendMessage(message);
+    }
+    public void onSuccess2(int i, int json) {
+        Log.i("Channel", "onSuccess");
+        Message message = Message.obtain();
+        message.what = i;
+        Bundle bundle = new Bundle();
+        bundle.putInt("json", json);
+        message.setData(bundle);
+        mHandler.sendMessage(message);
+    }
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+            switch (msg.what) {
+//                case 0:
+//                    TextView tv_yes_id = (TextView)findViewById(R.id.tv_yes_id);
+//                    //完成主界面更新,拿到数据
+//                    Bundle bundle0 = msg.getData();
+//                    int data0 = bundle0.getInt("json");
+//                    tv_yes_id.setText(data0+"");
+//                    break;
+//                case 1:
+//                    TextView tv_yes_list = (TextView)findViewById(R.id.tv_yes_list);
+//                    //完成主界面更新,拿到数据
+//                    Bundle bundle1 = msg.getData();
+//                    String data1 = bundle1.getString("json");
+//                    tv_yes_list.setText(data1);
+//                    break;
+            }
+        }
+    };
 
 }
