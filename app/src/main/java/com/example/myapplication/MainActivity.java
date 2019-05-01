@@ -10,9 +10,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    int connect_flag=0;
+    boolean sleep_flag = false;
+    String command ="none";
     public String[] permissions = new String[]{
+            Manifest.permission.INTERNET ,
+            Manifest.permission.CHANGE_NETWORK_STATE ,
+            Manifest.permission.ACCESS_NETWORK_STATE   ,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE   ,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -35,8 +46,27 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if(connect_flag==0){
+                    //connect Func
+                    Snackbar.make(view, "connect success!", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    connect_flag=1;
+                    fab.setImageResource(android.R.drawable.ic_media_pause);
+                    sleep_flag=false;
+                }else if(connect_flag==1){
+                    if(sleep_flag){
+                        command = "send_picture";
+                        fab.setImageResource(android.R.drawable.ic_media_pause);
+                    }else {
+                        command = "none";
+                        fab.setImageResource(android.R.drawable.ic_media_play);
+                    }
+                    sleep_flag=!sleep_flag;//取反
+
+                }
+
+
+
             }
         });
     }
@@ -56,19 +86,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.Item_connect) {
-            return true;
-        }
         if (id == R.id.Item_recognition) {
             return true;
         }
         if (id == R.id.Item_trainning) {
             return true;
         }
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -6,15 +6,18 @@
         android:id="@+id/Item_connect"
         android:icon="@android:drawable/ic_menu_send"
         android:title="连接"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        android:visible="false"/>
     <item
         android:id="@+id/Item_recognition"
         android:icon="@android:drawable/sym_def_app_icon"
-        android:title="人脸识别" />
+        android:title="人脸识别"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/Item_trainning"
         android:icon="@android:drawable/ic_lock_idle_alarm"
-        android:title="训练模型" />
+        android:title="训练模型"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
