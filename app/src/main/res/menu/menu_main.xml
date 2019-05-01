@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.myapplication.MainActivity">
+    <item
+        android:id="@+id/Item_connect"
+        android:icon="@android:drawable/ic_menu_send"
+        android:title="连接"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/Item_recognition"
+        android:icon="@android:drawable/sym_def_app_icon"
+        android:title="人脸识别" />
+    <item
+        android:id="@+id/Item_trainning"
+        android:icon="@android:drawable/ic_lock_idle_alarm"
+        android:title="训练模型" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never"
+        android:visible="false"></item>
+</menu>
