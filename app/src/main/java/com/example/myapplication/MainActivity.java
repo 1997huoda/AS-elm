@@ -20,9 +20,11 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -36,12 +38,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
     ZContext context = new ZContext();
     ZMQ.Socket socket = context.createSocket(ZMQ.REP);
     String human_name;
     Mat change_mat;
+    String name;
 
     int connect_flag=0;
     boolean sleep_flag = false;
@@ -104,10 +108,13 @@ public class MainActivity extends AppCompatActivity {
                 int face_num = Integer.valueOf(tmp).intValue();
                 send_msg(socket, "received_face_num");
                 //人脸名字
-                String name  = recv_msg(socket);
+                name  = recv_msg(socket);
                 send_msg(socket, "received_face_name");
                 //收图片
-                Mat img;
+                System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+                String originalImgPath = "img/1.png";
+                Mat img = Imgcodecs.imread(originalImgPath);
+//                Mat img;
 
                 socket.recv(0);
 //                socket.recv(&request);
@@ -115,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
 //                memcpy(img_data.data(), request.data(), request.size());
 //                img = cv::imdecode(img_data, cv::IMREAD_COLOR);
 //                imwrite("cap.jpg", img);
+                Bitmap to_save =matToBitmap(img);
+                save_bitmap(to_save,"cap.jpg");
                 send_msg(socket, "reveice_picture_i");
 
                 for (int i = 0; i < face_num; i++) {
@@ -125,10 +134,12 @@ public class MainActivity extends AppCompatActivity {
 //                    img = cv::imdecode(img_data, cv::IMREAD_COLOR);
 //                    resize(img, img, cv::Size(100, 100), 0, 0, INTER_LINEAR);
 //                    imwrite("face" + to_string(i) + ".jpg", img);
+                     to_save =matToBitmap(img);
+                    save_bitmap(to_save,"face"+ String.valueOf(i)+".jpg");
                     send_msg(socket, "reveice_picture_i");
                 }
                 socket.recv(0);
-
+                onSuccess2(1,1);
             } else if (command.equals( "none")) {
                 socket.recv(0);
             } else if (command.equals( "start_traning")) {
@@ -436,6 +447,26 @@ public class MainActivity extends AppCompatActivity {
 //                    String data1 = bundle1.getString("json");
 //                    tv_yes_list.setText(data1);
 //                    break;
+                case 1:
+
+                    TextView name0 = (TextView)findViewById(R.id.name0);
+                    TextView name1 = (TextView)findViewById(R.id.name1);
+                    TextView name2 = (TextView)findViewById(R.id.name2);
+                    TextView name3 = (TextView)findViewById(R.id.name3);
+                    TextView name4 = (TextView)findViewById(R.id.name4);
+                    TextView name5 = (TextView)findViewById(R.id.name5);
+//                    name0.setText("");
+//                    Vector name_label = new Vector();
+//                    String tmp;
+//                    for (int i = 0; i < name.length(); i++) {
+//                        if (name.charAt(i) != '/') {
+//                            tmp.push_back(name.charAt(i));
+//                        } else {
+//                            name_label.push_back(tmp);
+//                            tmp.clear();
+//                        }
+//                    }
+                    break;
             }
         }
     };
