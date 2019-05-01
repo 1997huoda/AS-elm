@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -30,7 +32,9 @@ import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class MainActivity extends AppCompatActivity {
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         MatOfByte img_data = new MatOfByte();
         Imgcodecs.imencode(".jpg", img, img_data);
         //test
-        //        ZMQ.Socket.send(img_data);
+//                ZMQ.Socket.send();
 
     };
     public void start_pause(){
@@ -203,7 +207,78 @@ public class MainActivity extends AppCompatActivity {
         face0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                /*****修改 human_name 和 change_mat ****/
+                EditText edit0 =(EditText)findViewById(R.id.edit0);
+                human_name=edit0.getText().toString();
+                Bitmap change_bitmap=read_bitmap("face0.jpg");
+                change_mat=bitmapToMat(change_bitmap);
+                //the last  thing -> change the command
+                command="change_train_set";
+            }
+        });
+        ImageView face1 = (ImageView) findViewById(R.id.face1);
+        face1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*****修改 human_name 和 change_mat ****/
+                EditText edit1 =(EditText)findViewById(R.id.edit1);
+                human_name=edit1.getText().toString();
+                Bitmap change_bitmap=read_bitmap("face1.jpg");
+                change_mat=bitmapToMat(change_bitmap);
+                //the last  thing -> change the command
+                command="change_train_set";
+            }
+        });
+        ImageView face2 = (ImageView) findViewById(R.id.face2);
+        face2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*****修改 human_name 和 change_mat ****/
+                EditText edit2 =(EditText)findViewById(R.id.edit2);
+                human_name=edit2.getText().toString();
+                Bitmap change_bitmap=read_bitmap("face2.jpg");
+                change_mat=bitmapToMat(change_bitmap);
+                //the last  thing -> change the command
+                command="change_train_set";
+            }
+        });
+        ImageView face3 = (ImageView) findViewById(R.id.face3);
+        face3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*****修改 human_name 和 change_mat ****/
+                EditText edit3 =(EditText)findViewById(R.id.edit3);
+                human_name=edit3.getText().toString();
+                Bitmap change_bitmap=read_bitmap("face3.jpg");
+                change_mat=bitmapToMat(change_bitmap);
+                //the last  thing -> change the command
+                command="change_train_set";
+            }
+        });
+        ImageView face4 = (ImageView) findViewById(R.id.face4);
+        face4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*****修改 human_name 和 change_mat ****/
+                EditText edit4 =(EditText)findViewById(R.id.edit4);
+                human_name=edit4.getText().toString();
+                Bitmap change_bitmap=read_bitmap("face4.jpg");
+                change_mat=bitmapToMat(change_bitmap);
+                //the last  thing -> change the command
+                command="change_train_set";
+            }
+        });
+        ImageView face5 = (ImageView) findViewById(R.id.face5);
+        face5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*****修改 human_name 和 change_mat ****/
+                EditText edit5 =(EditText)findViewById(R.id.edit5);
+                human_name=edit5.getText().toString();
+                Bitmap change_bitmap=read_bitmap("face5.jpg");
+                change_mat=bitmapToMat(change_bitmap);
+                //the last  thing -> change the command
+                command="change_train_set";
             }
         });
 
@@ -275,6 +350,26 @@ public class MainActivity extends AppCompatActivity {
         return buffer.array(); //Get the underlying array containing the data.
     }
 
+    public static Uri saveBitmap(Bitmap bm, String picName) {
+        try {
+            String dir= Environment.getExternalStorageDirectory().getAbsolutePath()+"/renji/"+picName+".jpg";
+            File f = new File(dir);
+            if (!f.exists()) {
+                f.getParentFile().mkdirs();
+                f.createNewFile();
+            }
+            FileOutputStream out = new FileOutputStream(f);
+            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.flush();
+            out.close();
+            Uri uri = Uri.fromFile(f);
+            return uri;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();    }
+        return null;
+    }
     public void save_bitmap(Bitmap bitmap,String save_name){
         FileOutputStream fos;
         try {
