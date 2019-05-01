@@ -1,22 +1,41 @@
 package com.example.myapplication;
 
 import android.Manifest;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.Scalar;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.zeromq.ZContext;
+import org.zeromq.ZMQ;
+
+import java.nio.ByteBuffer;
+
 public class MainActivity extends AppCompatActivity {
+    ZContext context = new ZContext();
+    ZMQ.Socket socket = context.createSocket(ZMQ.REP);
+    String human_name;
+    Mat change_mat;
+
     int connect_flag=0;
     boolean sleep_flag = false;
-    String command ="none";
+    String command ="send_picture";
     public String[] permissions = new String[]{
             Manifest.permission.INTERNET ,
             Manifest.permission.CHANGE_NETWORK_STATE ,
@@ -34,6 +53,105 @@ public class MainActivity extends AppCompatActivity {
 //            Manifest.permission.MODIFY_AUDIO_SETTINGS,
 //            Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CAMERA};
+    public void send_msg(ZMQ.Socket socket,String str){
+        socket.send(str.getBytes(ZMQ.CHARSET),0);
+    };
+    public String recv_msg(ZMQ.Socket socket){
+        byte[] received = socket.recv(0);
+        String str = new String(received,ZMQ.CHARSET);
+        return str;
+    };
+    public void send_pic(ZMQ.Socket socket, Mat img){
+        MatOfByte img_data = new MatOfByte();
+        Imgcodecs.imencode(".jpg", img, img_data);
+        //test
+        //        ZMQ.Socket.send(img_data);
+
+    };
+    public void start_pause(){
+        FloatingActionButton fab = findViewById(R.id.fab);
+        if(sleep_flag){
+            command = "send_picture";
+            fab.setImageResource(android.R.drawable.ic_media_pause);
+        }else {
+            command = "none";
+            fab.setImageResource(android.R.drawable.ic_media_play);
+        }
+        sleep_flag=!sleep_flag;//取反
+    }
+    public void stand() throws InterruptedException {
+        while (true) {
+            if (sleep_flag) {
+                Thread.sleep(1000);
+                continue;
+            }
+            Log.i("zmq"," void stand start");
+            send_msg(socket, command);
+            if (command.equals("send_picture")) {
+                //下位机发图，上位机收图
+                //收人脸数
+                String tmp = recv_msg(socket);
+                int face_num = Integer.valueOf(tmp).intValue();
+                send_msg(socket, "received_face_num");
+                //人脸名字
+                String name  = recv_msg(socket);
+                send_msg(socket, "received_face_name");
+                //收图片
+                Mat img;
+
+                socket.recv(0);
+//                socket.recv(&request);
+//                std::vector<uchar> img_data(request.size());
+//                memcpy(img_data.data(), request.data(), request.size());
+//                img = cv::imdecode(img_data, cv::IMREAD_COLOR);
+//                imwrite("cap.jpg", img);
+                send_msg(socket, "reveice_picture_i");
+
+                for (int i = 0; i < face_num; i++) {
+                    socket.recv(0);
+//                    socket.recv(&request);
+//                    std::vector<uchar> img_data(request.size());
+//                    memcpy(img_data.data(), request.data(), request.size());
+//                    img = cv::imdecode(img_data, cv::IMREAD_COLOR);
+//                    resize(img, img, cv::Size(100, 100), 0, 0, INTER_LINEAR);
+//                    imwrite("face" + to_string(i) + ".jpg", img);
+                    send_msg(socket, "reveice_picture_i");
+                }
+                socket.recv(0);
+
+            } else if (command.equals( "none")) {
+                socket.recv(0);
+            } else if (command.equals( "start_traning")) {
+                //收
+                socket.recv(0);
+
+                //只执行一次命令 自动切换
+                // command = "none";
+                start_pause();
+
+            } else if (command.equals("change_train_set")) {
+                socket.recv(0);
+                //发人名
+                //                human_name = "hhh";
+                send_msg(socket, human_name);
+                //收
+                socket.recv(0);
+
+                //发送图片
+                send_pic(socket, change_mat);
+                //收
+                socket.recv(0);
+
+                //防止重复发送 执行完change_train_set 下一个命令自己切换
+                // command = "none";
+                start_pause();
+
+            } else {
+                Log.i("zmq","GGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,29 +165,45 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(connect_flag==0){
-                    //connect Func
+                    connect_flag=1;//flag 提前 防止二次点击 zmq崩溃
+
+                    socket.bind("tcp://*:6666");
+                    byte[] request = socket.recv(0);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i("zmq ", "zmq thread: start /*/////////*/");
+                            //                        onSuccess2(0,0);
+                            try {
+                                stand();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
                     Snackbar.make(view, "connect success!", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    connect_flag=1;
+
+                    command = "send_picture";
                     fab.setImageResource(android.R.drawable.ic_media_pause);
                     sleep_flag=false;
                 }else if(connect_flag==1){
-                    if(sleep_flag){
-                        command = "send_picture";
-                        fab.setImageResource(android.R.drawable.ic_media_pause);
-                    }else {
-                        command = "none";
-                        fab.setImageResource(android.R.drawable.ic_media_play);
-                    }
-                    sleep_flag=!sleep_flag;//取反
-
+                    start_pause();
                 }
+            }
+        });
 
-
+        ImageView face0 = (ImageView) findViewById(R.id.face0);
+        face0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
+
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,12 +220,54 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.Item_recognition) {
-            return true;
-        }
         if (id == R.id.Item_trainning) {
+            command="start_traning";
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    //Mat 转 bitmap
+    public static Bitmap matToBitmap(Mat mat) {
+        Bitmap resultBitmap = null;
+        if (mat != null) {
+            resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+            if (resultBitmap != null)
+                Utils.matToBitmap(mat, resultBitmap);
+        }
+        return resultBitmap;
+    }
+
+    //Bitmap转Mat
+    public static Mat bitmapToMat(Bitmap bm) {
+        Bitmap bmp32 = bm.copy(Bitmap.Config.RGB_565, true);
+        Mat imgMat = new Mat ( bm.getHeight(), bm.getWidth(), CvType.CV_8UC2, new Scalar(0));
+        Utils.bitmapToMat(bmp32, imgMat);
+        return imgMat;
+    }
+    //Byte转Bitmap
+    public Bitmap ByteArray2Bitmap(byte[] data, int width, int height) {
+        int Size = width * height;
+        int[] rgba = new int[Size];
+
+        for (int i = 0; i < height; i++)
+            for (int j = 0; j < width; j++) {
+                rgba[i * width + j] = 0xff000000;
+            }
+
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bmp.setPixels(rgba, 0 , width, 0, 0, width, height);
+        return bmp;
+    }
+    //Bitmap转byte
+    public static byte[] bitmapToByteArray(Bitmap image) {
+        //calculate how many bytes the image consists of.
+        int bytes = image.getByteCount();
+
+        ByteBuffer buffer = ByteBuffer.allocate(bytes); //Create a new buffer
+        image.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
+        return buffer.array(); //Get the underlying array containing the data.
+    }
+
+
 }
