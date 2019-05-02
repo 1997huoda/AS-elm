@@ -237,8 +237,7 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit0 =(EditText)findViewById(R.id.edit0);
                 human_name=edit0.getText().toString();
-                Bitmap change_bitmap=read_bitmap("face0.jpg");
-                change_mat=bitmapToMat(change_bitmap);
+                change_mat=receive_mat[0];
                 //the last  thing -> change the command
                 command="change_train_set";
             }
@@ -250,8 +249,7 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit1 =(EditText)findViewById(R.id.edit1);
                 human_name=edit1.getText().toString();
-                Bitmap change_bitmap=read_bitmap("face1.jpg");
-                change_mat=bitmapToMat(change_bitmap);
+                change_mat=receive_mat[1];
                 //the last  thing -> change the command
                 command="change_train_set";
             }
@@ -263,8 +261,7 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit2 =(EditText)findViewById(R.id.edit2);
                 human_name=edit2.getText().toString();
-                Bitmap change_bitmap=read_bitmap("face2.jpg");
-                change_mat=bitmapToMat(change_bitmap);
+                change_mat=receive_mat[2];
                 //the last  thing -> change the command
                 command="change_train_set";
             }
@@ -276,8 +273,7 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit3 =(EditText)findViewById(R.id.edit3);
                 human_name=edit3.getText().toString();
-                Bitmap change_bitmap=read_bitmap("face3.jpg");
-                change_mat=bitmapToMat(change_bitmap);
+                change_mat=receive_mat[3];
                 //the last  thing -> change the command
                 command="change_train_set";
             }
@@ -289,8 +285,7 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit4 =(EditText)findViewById(R.id.edit4);
                 human_name=edit4.getText().toString();
-                Bitmap change_bitmap=read_bitmap("face4.jpg");
-                change_mat=bitmapToMat(change_bitmap);
+                change_mat=receive_mat[4];
                 //the last  thing -> change the command
                 command="change_train_set";
             }
@@ -302,8 +297,7 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit5 =(EditText)findViewById(R.id.edit5);
                 human_name=edit5.getText().toString();
-                Bitmap change_bitmap=read_bitmap("face5.jpg");
-                change_mat=bitmapToMat(change_bitmap);
+                change_mat=receive_mat[5];
                 //the last  thing -> change the command
                 command="change_train_set";
             }
