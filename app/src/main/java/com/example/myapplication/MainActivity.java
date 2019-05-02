@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     Mat change_mat;
     String name;
     Mat[] receive_mat = new Mat[6];
+    Mat cap;
 
     int connect_flag=0;
     boolean sleep_flag = false;
@@ -125,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
 //                Mat img;
 
                 socket.recv(0);
-                Mat cap = receive_pic(socket);
+                cap = receive_pic(socket);
+
 //                socket.recv(&request);
 //                std::vector<uchar> img_data(request.size());
 //                memcpy(img_data.data(), request.data(), request.size());
@@ -447,6 +449,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
         super.handleMessage(msg);
             switch (msg.what) {
+                case 0:
+                    break;
 //                case 0:
 //                    TextView tv_yes_id = (TextView)findViewById(R.id.tv_yes_id);
 //                    //完成主界面更新,拿到数据
@@ -461,7 +465,29 @@ public class MainActivity extends AppCompatActivity {
 //                    String data1 = bundle1.getString("json");
 //                    tv_yes_list.setText(data1);
 //                    break;
+                //人脸识别 UI 更新
                 case 1:
+                    Bitmap bit_cap=matToBitmap(cap);
+                    ImageView cap0=findViewById(R.id.cap0);
+                    cap0.setImageBitmap(bit_cap);
+                    Bitmap face_0=matToBitmap(receive_mat[0]);
+                    ImageView face0=findViewById(R.id.face0);
+                    face0.setImageBitmap(face_0);
+                    Bitmap face_1=matToBitmap(receive_mat[1]);
+                    ImageView face1=findViewById(R.id.face1);
+                    face1.setImageBitmap(face_1);
+                    Bitmap face_2=matToBitmap(receive_mat[2]);
+                    ImageView face2=findViewById(R.id.face2);
+                    face2.setImageBitmap(face_2);
+                    Bitmap face_3=matToBitmap(receive_mat[3]);
+                    ImageView face3=findViewById(R.id.face3);
+                    face3.setImageBitmap(face_3);
+                    Bitmap face_4=matToBitmap(receive_mat[4]);
+                    ImageView face4=findViewById(R.id.face4);
+                    face4.setImageBitmap(face_4);
+                    Bitmap face_5=matToBitmap(receive_mat[5]);
+                    ImageView face5=findViewById(R.id.face5);
+                    face5.setImageBitmap(face_5);
 
                     TextView name0 = (TextView)findViewById(R.id.name0);
                     TextView name1 = (TextView)findViewById(R.id.name1);

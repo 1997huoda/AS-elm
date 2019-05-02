@@ -9,7 +9,7 @@
     tools:showIn="@layout/activity_main">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/cap0"
         android:layout_width="320dp"
         android:layout_height="160dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/cap0">
 
         <LinearLayout
             android:layout_width="match_parent"
