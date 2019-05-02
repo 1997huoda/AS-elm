@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     String human_name;
     Mat change_mat;
     String name;
+    Mat[] receive_mat = new Mat[6];
 
     int connect_flag=0;
     boolean sleep_flag = false;
@@ -76,12 +77,19 @@ public class MainActivity extends AppCompatActivity {
         return str;
     };
     public void send_pic(ZMQ.Socket socket, Mat img){
-        MatOfByte img_data = new MatOfByte();
-        Imgcodecs.imencode(".jpg", img, img_data);
-        //test
-//                ZMQ.Socket.send();
-
+//        int nFlag = img.channels() * 8;//一个像素的bits
+//        int nHeight = img.height();
+//        int nWidth = img.width();
+//        int nBytes = nHeight * nWidth * nFlag / 8;//图像总的字节
+          byte[] a =mat2Byte(img,".jpg");
+          socket.send(a);
     };
+    public Mat receive_pic(ZMQ.Socket socket){
+        byte[] received = socket.recv(0);
+        Mat mat = Imgcodecs.imdecode(new MatOfByte(received), Imgcodecs.IMREAD_COLOR);
+//        Imgcodecs.imwrite(failName, mat);
+        return mat;
+    }
     public void start_pause(){
         FloatingActionButton fab = findViewById(R.id.fab);
         if(sleep_flag){
@@ -117,25 +125,31 @@ public class MainActivity extends AppCompatActivity {
 //                Mat img;
 
                 socket.recv(0);
+                Mat cap = receive_pic(socket);
 //                socket.recv(&request);
 //                std::vector<uchar> img_data(request.size());
 //                memcpy(img_data.data(), request.data(), request.size());
 //                img = cv::imdecode(img_data, cv::IMREAD_COLOR);
 //                imwrite("cap.jpg", img);
-                Bitmap to_save =matToBitmap(img);
-                save_bitmap(to_save,"cap.jpg");
+
+//                Bitmap to_save =matToBitmap(cap);
+//                save_bitmap(to_save,"cap.jpg");
                 send_msg(socket, "reveice_picture_i");
 
                 for (int i = 0; i < face_num; i++) {
                     socket.recv(0);
+                    if(i<6){
+                        receive_mat[i]=receive_pic(socket);
+                    }
 //                    socket.recv(&request);
 //                    std::vector<uchar> img_data(request.size());
 //                    memcpy(img_data.data(), request.data(), request.size());
 //                    img = cv::imdecode(img_data, cv::IMREAD_COLOR);
 //                    resize(img, img, cv::Size(100, 100), 0, 0, INTER_LINEAR);
 //                    imwrite("face" + to_string(i) + ".jpg", img);
-                     to_save =matToBitmap(img);
-                    save_bitmap(to_save,"face"+ String.valueOf(i)+".jpg");
+
+//                     to_save =matToBitmap(img);
+//                    save_bitmap(to_save,"face"+ String.valueOf(i)+".jpg");
                     send_msg(socket, "reveice_picture_i");
                 }
                 socket.recv(0);
@@ -470,5 +484,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public static byte[] mat2Byte(Mat matrix, String fileExtension) {
+        MatOfByte mob = new MatOfByte();
+        Imgcodecs.imencode(fileExtension, matrix, mob);
+        byte[] byteArray = mob.toArray();
+        return byteArray;
+    }/*
+byte[] byteString = mat2Byte(mat, ".jpg");
+
+Mat mat = Imgcodecs.imdecode(new MatOfByte(byteString), Imgcodecs.CV_LOAD_IMAGE_UNCHANGED)；
+
+Imgcodecs.imwrite(failName, mat);
+    */
 
 }
