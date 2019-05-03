@@ -461,6 +461,7 @@ public class MainActivity extends AppCompatActivity {
 //                    break;
                 //人脸识别 UI 更新
                 case 1:
+                    Log.i("UI","handler UI case 1");
                     Bitmap bit_cap=matToBitmap(cap);
                     ImageView cap0=findViewById(R.id.cap0);
                     cap0.setImageBitmap(bit_cap);
@@ -489,17 +490,28 @@ public class MainActivity extends AppCompatActivity {
                     TextView name3 = (TextView)findViewById(R.id.name3);
                     TextView name4 = (TextView)findViewById(R.id.name4);
                     TextView name5 = (TextView)findViewById(R.id.name5);
-//                    name0.setText("");
-//                    Vector name_label = new Vector();
-//                    String tmp;
-//                    for (int i = 0; i < name.length(); i++) {
-//                        if (name.charAt(i) != '/') {
-//                            tmp.push_back(name.charAt(i));
-//                        } else {
-//                            name_label.push_back(tmp);
-//                            tmp.clear();
-//                        }
-//                    }
+
+                    name0.setText("");
+                    name = "dadada/dadada/dadadaddddd/dddddddddddddddf/fffffff/";
+                    int cnt = 0 ;
+                    String[] name_label = new String[10];
+                    String tmp="";
+                    for (int i = 0; i < name.length(); i++) {
+                        if (name.charAt(i) != '/') {
+
+                            tmp+=name.charAt(i);
+                        } else {
+                            name_label[cnt++]=tmp;
+                            tmp="";
+                        }
+                    }
+                    name0.setText(name_label[0]);
+                    name1.setText(name_label[1]);
+                    name2.setText(name_label[2]);
+                    name3.setText(name_label[3]);
+                    name4.setText(name_label[4]);
+                    name5.setText(name_label[5]);
+
                     break;
             }
         }
