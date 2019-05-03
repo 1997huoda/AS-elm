@@ -103,12 +103,12 @@ public class MainActivity extends AppCompatActivity {
         sleep_flag=!sleep_flag;//取反
     }
     public void stand() throws InterruptedException {
+        Log.i("zmq"," void stand in");
         while (true) {
             if (sleep_flag) {
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 continue;
             }
-            Log.i("zmq"," void stand start");
             send_msg(socket, command);
             if (command.equals("send_picture")) {
                 //下位机发图，上位机收图
@@ -128,14 +128,6 @@ public class MainActivity extends AppCompatActivity {
                 socket.recv(0);
                 cap = receive_pic(socket);
 
-//                socket.recv(&request);
-//                std::vector<uchar> img_data(request.size());
-//                memcpy(img_data.data(), request.data(), request.size());
-//                img = cv::imdecode(img_data, cv::IMREAD_COLOR);
-//                imwrite("cap.jpg", img);
-
-//                Bitmap to_save =matToBitmap(cap);
-//                save_bitmap(to_save,"cap.jpg");
                 send_msg(socket, "reveice_picture_i");
 
                 for (int i = 0; i < face_num; i++) {
@@ -143,15 +135,6 @@ public class MainActivity extends AppCompatActivity {
                     if(i<6){
                         receive_mat[i]=receive_pic(socket);
                     }
-//                    socket.recv(&request);
-//                    std::vector<uchar> img_data(request.size());
-//                    memcpy(img_data.data(), request.data(), request.size());
-//                    img = cv::imdecode(img_data, cv::IMREAD_COLOR);
-//                    resize(img, img, cv::Size(100, 100), 0, 0, INTER_LINEAR);
-//                    imwrite("face" + to_string(i) + ".jpg", img);
-
-//                     to_save =matToBitmap(img);
-//                    save_bitmap(to_save,"face"+ String.valueOf(i)+".jpg");
                     send_msg(socket, "reveice_picture_i");
                 }
                 socket.recv(0);
@@ -203,8 +186,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(connect_flag==0){
                     connect_flag=1;//flag 提前 防止二次点击 zmq崩溃
-
-                    socket.bind("tcp://*:6666");
+                    socket.bind("tcp://*:5555");
                     byte[] request = socket.recv(0);
                     new Thread(new Runnable() {
                         @Override
@@ -302,8 +284,6 @@ public class MainActivity extends AppCompatActivity {
                 command="change_train_set";
             }
         });
-
-
     }
 
 
@@ -491,8 +471,7 @@ public class MainActivity extends AppCompatActivity {
                     TextView name4 = (TextView)findViewById(R.id.name4);
                     TextView name5 = (TextView)findViewById(R.id.name5);
 
-                    name0.setText("");
-                    name = "dadada/dadada/dadadaddddd/dddddddddddddddf/fffffff/";
+//                    name = "dadada/dadada/dadadaddddd/dddddddddddddddf/fffffff/";
                     int cnt = 0 ;
                     String[] name_label = new String[10];
                     String tmp="";
