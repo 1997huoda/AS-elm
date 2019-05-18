@@ -233,9 +233,10 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit0 =(EditText)findViewById(R.id.edit0);
                 human_name=edit0.getText().toString();
-                change_mat=receive_mat[0];
-                //the last  thing -> change the command
-                command="change_train_set";
+                if(human_name!=null){
+                    change_mat=receive_mat[0];
+                    command="change_train_set";
+                }
             }
         });
         ImageView face1 = (ImageView) findViewById(R.id.face1);
@@ -245,9 +246,10 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit1 =(EditText)findViewById(R.id.edit1);
                 human_name=edit1.getText().toString();
-                change_mat=receive_mat[1];
-                //the last  thing -> change the command
-                command="change_train_set";
+                if(human_name!=null){
+                    change_mat=receive_mat[1];
+                    command="change_train_set";
+                }
             }
         });
         ImageView face2 = (ImageView) findViewById(R.id.face2);
@@ -257,9 +259,10 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit2 =(EditText)findViewById(R.id.edit2);
                 human_name=edit2.getText().toString();
-                change_mat=receive_mat[2];
-                //the last  thing -> change the command
-                command="change_train_set";
+                if(human_name!=null){
+                    change_mat=receive_mat[2];
+                    command="change_train_set";
+                }
             }
         });
         ImageView face3 = (ImageView) findViewById(R.id.face3);
@@ -269,9 +272,10 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit3 =(EditText)findViewById(R.id.edit3);
                 human_name=edit3.getText().toString();
-                change_mat=receive_mat[3];
-                //the last  thing -> change the command
-                command="change_train_set";
+                if(human_name!=null){
+                    change_mat=receive_mat[3];
+                    command="change_train_set";
+                }
             }
         });
         ImageView face4 = (ImageView) findViewById(R.id.face4);
@@ -281,9 +285,10 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit4 =(EditText)findViewById(R.id.edit4);
                 human_name=edit4.getText().toString();
-                change_mat=receive_mat[4];
-                //the last  thing -> change the command
-                command="change_train_set";
+                if(human_name!=null){
+                    change_mat=receive_mat[4];
+                    command="change_train_set";
+                }
             }
         });
         ImageView face5 = (ImageView) findViewById(R.id.face5);
@@ -293,9 +298,10 @@ public class MainActivity extends AppCompatActivity {
                 /*****修改 human_name 和 change_mat ****/
                 EditText edit5 =(EditText)findViewById(R.id.edit5);
                 human_name=edit5.getText().toString();
-                change_mat=receive_mat[5];
-                //the last  thing -> change the command
-                command="change_train_set";
+                if(human_name!=null){
+                    change_mat=receive_mat[5];
+                    command="change_train_set";
+                }
             }
         });
     }
