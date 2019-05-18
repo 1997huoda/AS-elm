@@ -23,6 +23,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -40,7 +45,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Vector;
 
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2RGB;
+import static org.opencv.imgproc.Imgproc.cvtColor;
+
 public class MainActivity extends AppCompatActivity {
+
     ZContext context = new ZContext();
     ZMQ.Socket socket = context.createSocket(ZMQ.REP);
     String human_name;
@@ -60,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.CHANGE_WIFI_STATE   ,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
+//            Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE,
+//            Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.INTERNET,
 //           Manifest.permission.READ_CONTACTS,  //我们不需要联系人
 //            Manifest.permission.MODIFY_AUDIO_SETTINGS,
@@ -102,13 +111,25 @@ public class MainActivity extends AppCompatActivity {
         }
         sleep_flag=!sleep_flag;//取反
     }
+
+//    @Override
+//    public void onResume()
+//    {
+//        super.onResume();
+//        if (!OpenCVLoader.initDebug()) {
+//            Log.i("cv", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+//        } else {
+//            Log.i("cv", "OpenCV library found inside package. Using it!");
+//        }
+//    }
     public void stand() throws InterruptedException {
         Log.i("zmq"," void stand in");
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         while (true) {
-            if (sleep_flag) {
-                Thread.sleep(100);
-                continue;
-            }
+//            if (sleep_flag) {
+//                Thread.sleep(100);
+//                continue;
+//            }
             send_msg(socket, command);
             if (command.equals("send_picture")) {
                 //下位机发图，上位机收图
@@ -120,21 +141,11 @@ public class MainActivity extends AppCompatActivity {
                 name  = recv_msg(socket);
                 send_msg(socket, "received_face_name");
                 //收图片
-                System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-                String originalImgPath = "img/1.png";
-                Mat img = Imgcodecs.imread(originalImgPath);
-//                Mat img;
-
-                socket.recv(0);
                 cap = receive_pic(socket);
-
-                send_msg(socket, "reveice_picture_i");
-
+                cvtColor(cap,cap,COLOR_BGR2RGB);
+                send_msg(socket, "reveice_cap_picture");
                 for (int i = 0; i < face_num; i++) {
-                    socket.recv(0);
-                    if(i<6){
-                        receive_mat[i]=receive_pic(socket);
-                    }
+                    if(i<6){receive_mat[i]=receive_pic(socket);cvtColor(receive_mat[i],receive_mat[i],COLOR_BGR2RGB);}
                     send_msg(socket, "reveice_picture_i");
                 }
                 socket.recv(0);
@@ -179,6 +190,9 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(MainActivity.this, permissions,1);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        System.loadLibrary("opencv_java4");
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
