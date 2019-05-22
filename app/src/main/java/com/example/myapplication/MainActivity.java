@@ -44,11 +44,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2RGB;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
 public class MainActivity extends AppCompatActivity {
+    private final ReentrantLock lock = new ReentrantLock();
 
     ZContext context = new ZContext();
     ZMQ.Socket socket = context.createSocket(ZMQ.REP);
@@ -144,10 +146,17 @@ public class MainActivity extends AppCompatActivity {
                 cap = receive_pic(socket);
                 cvtColor(cap,cap,COLOR_BGR2RGB);
                 send_msg(socket, "reveice_cap_picture");
-                for (int i = 0; i < face_num; i++) {
-                    if(i<6){receive_mat[i]=receive_pic(socket);cvtColor(receive_mat[i],receive_mat[i],COLOR_BGR2RGB);}
-                    send_msg(socket, "reveice_picture_i");
+
+                lock.lock();
+                try {
+                    for (int i = 0; i < face_num; i++) {
+                        if(i<6){receive_mat[i]=receive_pic(socket);cvtColor(receive_mat[i],receive_mat[i],COLOR_BGR2RGB);}
+                        send_msg(socket, "reveice_picture_i");
+                    }
+                } finally {
+                    lock.unlock();
                 }
+
                 socket.recv(0);
                 onSuccess2(1,1);
             } else if (command.equals( "none")) {
@@ -158,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
 
                 //只执行一次命令 自动切换
                 // command = "none";
-                start_pause();
+//                start_pause();
+                command="send_picture";
 
             } else if (command.equals("change_train_set")) {
                 socket.recv(0);
@@ -175,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
 
                 //防止重复发送 执行完change_train_set 下一个命令自己切换
                 // command = "none";
-                start_pause();
+//                start_pause();
+                command="send_picture";
 
             } else {
                 Log.i("zmq","GGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
@@ -231,11 +242,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /*****修改 human_name 和 change_mat ****/
+                command="none";
                 EditText edit0 =(EditText)findViewById(R.id.edit0);
                 human_name=edit0.getText().toString();
                 if(human_name!=null){
-                    change_mat=receive_mat[0];
+                    lock.lock();
+                    try {
+                         change_mat=receive_mat[0].clone();
+                    } finally {
+                        lock.unlock();
+                    }
                     command="change_train_set";
+                }else{
+                    command="send_picture";
                 }
             }
         });
@@ -244,11 +263,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /*****修改 human_name 和 change_mat ****/
+                command="none";
                 EditText edit1 =(EditText)findViewById(R.id.edit1);
                 human_name=edit1.getText().toString();
                 if(human_name!=null){
-                    change_mat=receive_mat[1];
+                    lock.lock();
+                    try {
+                        change_mat=receive_mat[1].clone();
+                    } finally {
+                        lock.unlock();
+                    }
                     command="change_train_set";
+                }else{
+                    command="send_picture";
                 }
             }
         });
@@ -257,11 +284,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /*****修改 human_name 和 change_mat ****/
+                command="none";
                 EditText edit2 =(EditText)findViewById(R.id.edit2);
                 human_name=edit2.getText().toString();
                 if(human_name!=null){
-                    change_mat=receive_mat[2];
+                    lock.lock();
+                    try {
+                        change_mat=receive_mat[2].clone();
+                    } finally {
+                        lock.unlock();
+                    }
                     command="change_train_set";
+                }else{
+                    command="send_picture";
                 }
             }
         });
@@ -270,11 +305,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /*****修改 human_name 和 change_mat ****/
+                command="none";
                 EditText edit3 =(EditText)findViewById(R.id.edit3);
                 human_name=edit3.getText().toString();
                 if(human_name!=null){
-                    change_mat=receive_mat[3];
+                    lock.lock();
+                    try {
+                        change_mat=receive_mat[3].clone();
+                    } finally {
+                        lock.unlock();
+                    }
                     command="change_train_set";
+                }else{
+                    command="send_picture";
                 }
             }
         });
@@ -283,11 +326,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /*****修改 human_name 和 change_mat ****/
+                command="none";
                 EditText edit4 =(EditText)findViewById(R.id.edit4);
                 human_name=edit4.getText().toString();
                 if(human_name!=null){
-                    change_mat=receive_mat[4];
+                    lock.lock();
+                    try {
+                        change_mat=receive_mat[4].clone();
+                    } finally {
+                        lock.unlock();
+                    }
                     command="change_train_set";
+                }else{
+                    command="send_picture";
                 }
             }
         });
@@ -296,11 +347,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 /*****修改 human_name 和 change_mat ****/
+                command="none";
                 EditText edit5 =(EditText)findViewById(R.id.edit5);
                 human_name=edit5.getText().toString();
                 if(human_name!=null){
-                    change_mat=receive_mat[5];
+                    lock.lock();
+                    try {
+                        change_mat=receive_mat[5].clone();
+                    } finally {
+                        lock.unlock();
+                    }
                     command="change_train_set";
+                }else{
+                    command="send_picture";
                 }
             }
         });
